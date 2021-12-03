@@ -1,81 +1,51 @@
 import * as fs from "fs";
 
-const binaryArray = fs.readFileSync("input", "utf8").split("\n");
+const binaryArray = inputToBools(fs.readFileSync("input", "utf8").split("\n"));
 
-function filterBinaryArray(
-  characterIndex: number = 0,
-  binaryNumbers: string[],
-  mostCommon: boolean
-): string {
-
-  // get indexes of rows with '1'
-  const positiveBitRowsIndices: number[] = [];
-  for (let index = 0; index < binaryNumbers.length; index++) {
-    if (+binaryNumbers[index][characterIndex]) {
-      positiveBitRowsIndices.push(index);
-    }
+function inputToBools(input: string[]) : boolean[][]{
+  const result : boolean[][] = [];
+  for (let row = 0; row < input.length; row++) {
+    result[row] = binaryStringToBooleanArray(input[row])
   }
+  return result;
+}
 
-  // decide on comparison (are we interested in most frequent or least frequent)
-  const comparitor = mostCommon
-    ? positiveBitRowsIndices.length >= binaryNumbers.length / 2
-    : positiveBitRowsIndices.length <= binaryNumbers.length / 2;
+function binaryStringToBooleanArray(input: string) : boolean[]{
+  const arr : boolean[] = [];
+  for (let col = 0; col < input.length; col++) {
+    arr.push(!!+input[col])
+  }
+  return arr;
+}
 
-  // if comparison matches
-  if (comparitor) {
-    filterOutRowsAt(positiveBitRowsIndices, binaryNumbers);
+
+function filterInput(input: boolean[][], column: number = 0, lower : boolean = true) : boolean[]{
+  if (input.length == 1){
+    return input[0];
+  }
+  const half = input.length / 2;
+  const positiveRowsCount = input.filter(o => o[column]).length;
+  if (positiveRowsCount >= half){
+    return filterInput(input.filter(o => o[column] !== lower), ++column, lower);
   } else {
-    // create new array from positive rows
-    const newBinary = [];
-    for (let index = positiveBitRowsIndices.length - 1; index > -1; index--) {
-      newBinary.push(binaryNumbers[positiveBitRowsIndices[index]]);
-    }
-    binaryNumbers = newBinary;
+    return filterInput(input.filter(o => o[column] === lower), ++column, lower);
   }
-
-  // completion condition
-  if (binaryNumbers.length == 1) {
-    return binaryNumbers[0];
-  }
-
-  // recurse on new set of rows, on next character along
-  return filterBinaryArray(++characterIndex, binaryNumbers, mostCommon);
 }
 
-function filterOutRowsAt<T>(rowsToRemove : number[], removeFrom : Array<T>){
-      // filter out positive rows from array
-      for (let index = removeFrom.length - 1; index > -1; index--) {
-        removeFrom.splice(rowsToRemove[index], 1);
-      }
-}
-
-function filterOutRowsExcluding<T>(rowsToRemove: number[], removeFrom : Array<T>){
-    // create new array from positive rows
-    const newBinary = [];
-    for (let index = rowsToRemove.length - 1; index > -1; index--) {
-      newBinary.push(removeFrom[rowsToRemove[index]]);
-    }
-    removeFrom = newBinary;
-}
-
-function binaryToDecimal(binary: string): number {
+function binaryToDecimal(binary: boolean[]): number {
   let result = 0;
   for (let index = 0; index < binary.length; index++) {
     const power = binary.length - 1 - index;
     const amount = Math.pow(2, power);
 
-    if (+binary[index]) {
+    if (binary[index]) {
       result += amount;
     };
   }
   return result;
 }
 
-const binaryArrayCopy = Object.assign([], binaryArray);
-const oxygen = binaryToDecimal(filterBinaryArray(0, binaryArrayCopy, true));
-const co2 = binaryToDecimal(filterBinaryArray(0, binaryArray, false));
+const o2 = binaryToDecimal(filterInput(Object.assign([], binaryArray),0,false));
+const co2 = binaryToDecimal(filterInput(binaryArray,0,true));
 
-console.log(oxygen);
-console.log(co2);
-
-console.log(oxygen * co2);
+console.log(o2 * co2);
