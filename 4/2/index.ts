@@ -1,8 +1,11 @@
 import * as fs from "fs";
-import { exit } from "process";
+import { CLIENT_RENEG_WINDOW } from "tls";
 
 type Card = Square[][];
-
+interface CardAggregation {
+  Cards: Card[],
+  Current: Card
+}
 class Square {
   constructor(value: number) {
     this.Value = value;
@@ -16,25 +19,19 @@ class Square {
 }
 
 function generateCards(input: string[]): Card[] {
-  const result: Card[] = [];
-
-  var currentCard: Card = [];
-  for (const iterator of input) {
-    if (iterator == "") {
-      if (currentCard.length > 0) {
-        result.push(currentCard);
-        currentCard = [];
+  return input.reduce<CardAggregation>((agg, o) => {
+    if (o == "") {
+      if (agg.Current.length > 0) {
+        agg.Cards.push(agg.Current);
+        agg.Current = [];
       }
-      continue;
+      return agg;
     }
-
-    const numbers = iterator.split(' ').filter(o => o !== '').flatMap(o => { return new Square(+o) });
-    currentCard.push(numbers);
-  }
-
-  result.push(currentCard);
-
-  return result;
+    const numbers = o.split(' ').filter(o => o !== '').flatMap(o => { return new Square(+o) });
+    agg.Current.push(numbers);
+    return agg;
+  }, { Cards: [], Current: [] })
+    .Cards;
 }
 
 function updateCards(cards: Card[], piece: number): void {
@@ -51,10 +48,8 @@ function updateCards(cards: Card[], piece: number): void {
 
 function checkCard(card: Card): boolean {
   // check rows
-  for (const row of card) {
-    if (row.filter(o => o.Checked).length == row.length) {
-      return true;
-    }
+  if (card.filter(row => row.filter(square => square.Checked).length == row.length).length > 0) {
+    return true;
   }
 
   // check columns
@@ -72,11 +67,11 @@ function checkCard(card: Card): boolean {
   return false;
 }
 
-function getWinningCardIndices(cards: Card[]): number[]{
+function getWinningCardIndices(cards: Card[]): number[] {
   return cards
-  .flatMap((card,index) => { return {index: index, card : card}})
-  .filter(card => checkCard(card.card))
-  .flatMap(card => card.index);
+    .flatMap((card, index) => { return { index: index, card: card } })
+    .filter(card => checkCard(card.card))
+    .flatMap(card => card.index);
 }
 
 function resultFromCard(card: Card, number: number) {
@@ -87,26 +82,26 @@ function resultFromCard(card: Card, number: number) {
     .reduce((acc, item) => acc + item, 0) * number;
 }
 
-const gamedata = fs.readFileSync("testinput", "utf8").split("\n");
+const gamedata = fs.readFileSync("input", "utf8").split("\n");
 const game = gamedata[0].split(',').flatMap(o => +o);
 
 let cards = generateCards(gamedata.slice(1));
 
-var lastNumber : number | undefined;
+var lastNumber: number | undefined;
 for (const number of game) {
   lastNumber = number;
-  
+
   // check boxes
   updateCards(cards, number);
-  
-  if (cards.length == 1){
+
+  if (cards.length == 1) {
     break;
   }
 
   // get index of winners
   // and remove from set
   getWinningCardIndices(cards)
-    .sort((a,b) => a > b ? -1 : 1)
+    .sort((a, b) => a > b ? -1 : 1)
     .forEach(index => cards.splice(index, 1));
 }
 
