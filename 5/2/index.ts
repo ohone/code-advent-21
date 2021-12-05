@@ -15,7 +15,7 @@ function parseLines(lineData: string[]): Coordinate[][] {
   return lineData
     .map(o => o
       .split(' -> ')
-      .flatMap<Coordinate>(rawCoord => {
+      .map<Coordinate>(rawCoord => {
         const splitCoords = rawCoord.split(',');
         return {
           x: +splitCoords[0], y: +splitCoords[1]
@@ -24,32 +24,32 @@ function parseLines(lineData: string[]): Coordinate[][] {
     );
 }
 
-function isHorizontalLine(start :Coordinate, end: Coordinate) : boolean{
+function isHorizontalLine(start: Coordinate, end: Coordinate): boolean {
   return start.y == end.y;
 }
 
-function isVerticalLine(start: Coordinate, end: Coordinate) : boolean{
+function isVerticalLine(start: Coordinate, end: Coordinate): boolean {
   return start.x == end.x;
 }
 
-function isDiagonalLine(start: Coordinate, end: Coordinate) : boolean{
-   return Math.abs((start.y - end.y)/(start.x - end.x)) == 1;
+function isDiagonalLine(start: Coordinate, end: Coordinate): boolean {
+  return Math.abs((start.y - end.y) / (start.x - end.x)) == 1;
 }
 
-function parseDiagonal(coords : Coordinate[]) : Coordinate[]{
-  const coordinatesSortedByX = coords.sort((a,b) => a.x > b.x ? 1 : -1);
+function parseDiagonal(coords: Coordinate[]): Coordinate[] {
+  const coordinatesSortedByX = coords.sort((a, b) => a.x > b.x ? 1 : -1);
 
-  const yiterator = coordinatesSortedByX[1].y > coordinatesSortedByX[0].y 
-    ? (y:number) => ++y
-    : (y:number) => --y;
+  const yiterator = coordinatesSortedByX[1].y > coordinatesSortedByX[0].y
+    ? (y: number) => ++y
+    : (y: number) => --y;
 
-    const result : Coordinate[] = [];
-    let y = coordinatesSortedByX[0].y;
-    for(var x = coordinatesSortedByX[0].x; x < coordinatesSortedByX[1].x + 1; x++){
-      result.push({x,y});
-      y = yiterator(y);
-    }
-    return result;
+  const result: Coordinate[] = [];
+  let y = coordinatesSortedByX[0].y;
+  for (var x = coordinatesSortedByX[0].x; x < coordinatesSortedByX[1].x + 1; x++) {
+    result.push({ x, y });
+    y = yiterator(y);
+  }
+  return result;
 }
 
 const lines = parseLines(fs.readFileSync("input", "utf8").split("\n"));
@@ -59,7 +59,7 @@ const allCoordinates: Coordinate[] = lines
   .flatMap(o => {
     if (isVerticalLine(o[0], o[1])) {
       const iter = o.sort((a, b) => a.y > b.y ? 1 : -1)
-        .flatMap(o => o.y);
+        .map(o => o.y);
       const resultCoord: Coordinate[] = [];
       for (let i = iter[0]; i < iter[1] + 1; i++) {
         resultCoord.push({ x: o[0].x, y: i })
@@ -68,14 +68,14 @@ const allCoordinates: Coordinate[] = lines
     }
     if (isHorizontalLine(o[0], o[1])) {
       const iter = o.sort((a, b) => a.x > b.x ? 1 : -1)
-        .flatMap(o => o.x);
+        .map(o => o.x);
       const resultCoord: Coordinate[] = [];
       for (let i = iter[0]; i < iter[1] + 1; i++) {
         resultCoord.push({ x: i, y: o[0].y })
       }
       return resultCoord;
     }
-    if (isDiagonalLine(o[0], o[1])){
+    if (isDiagonalLine(o[0], o[1])) {
       return parseDiagonal([o[0], o[1]]);
     }
     return []

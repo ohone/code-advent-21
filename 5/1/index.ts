@@ -15,7 +15,7 @@ function parseLines(lineData: string[]): coord[][] {
   return lineData
     .map(o => o
       .split(' -> ')
-      .flatMap<coord>(rawCoord => {
+      .map<coord>(rawCoord => {
         const splicoords = rawCoord.split(',');
         return {
           x: +splicoords[0], y: +splicoords[1]
@@ -31,7 +31,7 @@ const allCoordinates: coord[] = lines
   .flatMap(o => {
     if (o[0].x == o[1].x) {
       const iter = o.sort((a, b) => a.y > b.y ? 1 : -1)
-        .flatMap(o => o.y);
+        .map(o => o.y);
       const resultCoord: coord[] = [];
       for (let i = iter[0]; i < iter[1] + 1; i++) {
         resultCoord.push({ x: o[0].x, y: i })
@@ -40,7 +40,7 @@ const allCoordinates: coord[] = lines
     }
     if (o[0].y == o[1].y) {
       const iter = o.sort((a, b) => a.x > b.x ? 1 : -1)
-        .flatMap(o => o.x);
+        .map(o => o.x);
       const resultCoord: coord[] = [];
       for (let i = iter[0]; i < iter[1] + 1; i++) {
         resultCoord.push({ x: i, y: o[0].y })
