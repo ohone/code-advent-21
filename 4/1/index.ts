@@ -1,8 +1,6 @@
 import * as fs from "fs";
 import { exit } from "process";
 
-
-
 type Card = Square[][];
 
 class Square {
@@ -84,7 +82,7 @@ function resultFromCard(card: Card, number: number) {
   return card
     .flatMap(o => o
       .filter(p => !p.Checked)
-      .flatMap(f => +f.Value))
+      .map(f => +f.Value))
     .reduce((acc, item) => acc + item, 0) * number;
 }
 

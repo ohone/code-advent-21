@@ -69,16 +69,16 @@ function checkCard(card: Card): boolean {
 
 function getWinningCardIndices(cards: Card[]): number[] {
   return cards
-    .flatMap((card, index) => { return { index: index, card: card } })
+    .map((card, index) => { return { index: index, card: card } })
     .filter(card => checkCard(card.card))
-    .flatMap(card => card.index);
+    .map(card => card.index);
 }
 
 function resultFromCard(card: Card, number: number) {
   return card
     .flatMap(o => o
       .filter(p => !p.Checked)
-      .flatMap(f => f.Value))
+      .map(f => f.Value))
     .reduce((acc, item) => acc + item, 0) * number;
 }
 
