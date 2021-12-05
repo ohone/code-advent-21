@@ -33,6 +33,7 @@ function generateCards(input: string[]): Card[] {
     const numbers = iterator.split(' ').filter(o => o !== '').flatMap(o => { return new Square(+o) });
     currentCard.push(numbers);
   }
+  console.log(currentCard);
 
   result.push(currentCard);
 
@@ -59,7 +60,7 @@ function checkCard(card: Card): boolean {
     }
   }
 
-  // check columns
+  // check
   for (let column = 0; column < 5; column++) {
     for (let row = 0; row < card.length; row++) {
       if (!card[row][column]) {
@@ -74,8 +75,9 @@ function checkCard(card: Card): boolean {
   return false;
 }
 
-function getWinningCard(cards: Card[]): Card | undefined {
-  return cards.filter(card => checkCard(card))[0];
+function getWinningCardIndex(cards: Card[]): number | undefined {
+
+  return cards.findIndex(card => checkCard(card));
 }
 
 function resultFromCard(card: Card, number: number) {
@@ -93,12 +95,13 @@ let cards = generateCards(gamedata.slice(1));
 
 for (const number of game) {
   updateCards(cards, number);
-  const winningCard = getWinningCard(cards);
+  const winningCard = getWinningCardIndex(cards);
   if (winningCard) {
-    console.log("last number: " + number);
-
-    console.log(resultFromCard(winningCard, number));
-    exit();
+    cards.splice(winningCard, 1);
+    if (cards.length == 1){
+      console.log(resultFromCard(cards[0], number));
+      exit();
+    }
   }
 }
 
