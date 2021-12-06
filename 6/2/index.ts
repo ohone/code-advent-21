@@ -1,13 +1,19 @@
 import * as fs from "fs";
 
-var fish = [0,0,0,0,0,0,0,0,0]
+const createArray = () => new Array<number>(9).fill(0);
+
+var fish = createArray();
 const resetVal = 6;
-fs.readFileSync("testinput", "utf8").split(",").map(o => +o).forEach(n => { fish[n] = ++fish[n]; });
+
+fs.readFileSync("testinput", "utf8")
+    .split(",")
+    .map(o => +o)
+    .forEach(n => fish[n]++);
 
 const days = 256;
 
 for (let day = 0; day < days; day++) {
-    const newArray : number[] = [0,0,0,0,0,0,0,0,0];
+    const newArray = createArray();
 
     // shift values down one
     for (let fishIndex = fish.length - 1; fishIndex > 0; fishIndex--) {
