@@ -1,6 +1,6 @@
 import * as fs from "fs";
 
-let vars = fs
+const vars = fs
     .readFileSync("input", "utf8")
     .split(",")
     .map(o => +o)
@@ -9,7 +9,7 @@ let vars = fs
 const largestDisplacement = vars[0];
 
 // tally of positions ([position] = count)
-let tally = new Array<number>(largestDisplacement + 1).fill(0);
+const tally = new Array<number>(largestDisplacement + 1).fill(0);
 // populate tally
 vars.forEach(o => tally[o]++);
 
