@@ -53,24 +53,23 @@ function processRow(row: string[]): string[] {
     return [];
   }
 
-  const autoCompleted : string[] = [];
+  const autoCompleted: string[] = [];
   // got to the end of an incomplete row
-  while(stack.length > 0){
-    autoCompleted.push(inverseSyntaxMap.get(stack.pop()!)!)
+  while (stack.length > 0) {
+    autoCompleted.push(inverseSyntaxMap.get(stack.pop()!)!);
   }
   return autoCompleted;
 }
 
-const calculateScore = (inputs : number[]) =>
-  inputs.reduce((agg,num) => (agg * 5) + num , 0)
-
+const calculateScore = (inputs: number[]) =>
+  inputs.reduce((agg, num) => agg * 5 + num, 0);
 
 var scores = fs
   .readFileSync("input", "utf8")
   .split("\n")
   .map((o) => processRow(o.split("")))
-  .filter(o => o.length > 0)
-  .map(row => calculateScore(row.map(char => scoreMap.get(char)!)))
-  .sort((a,b) => a > b ? -1 : 1)
+  .filter((o) => o.length > 0)
+  .map((row) => calculateScore(row.map((char) => scoreMap.get(char)!)))
+  .sort((a, b) => (a > b ? -1 : 1));
 
-console.log(scores[Math.floor(scores.length / 2)])
+console.log(scores[Math.floor(scores.length / 2)]);
