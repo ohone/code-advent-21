@@ -23,14 +23,12 @@ func main() {
 	// first line is game
 	scanner.Scan()
 	game := parseGame(scanner.Text())
-
+	
 	// advance scanner to first board
 	scanner.Scan()
 
 	// get board
 	boards := populateBoard(scanner)
-
-	updateBoards(game, &boards)
 }
 
 func updateBoards(game []string, boards *[]*[]*[5]square) {
@@ -104,7 +102,7 @@ func evaluateBoard(board []*[5]square) bool {
 	return false
 }
 
-func parseGame(firstLine string) []string {
+func parseGame(firstLine string) []int {
 	return splitString(firstLine, []rune{','})
 }
 
@@ -117,7 +115,13 @@ func splitString(s string, separators []rune) []string {
 		}
 		return false
 	}
-	return strings.FieldsFunc(s, f)
+	res := strings.FieldsFunc(s, f)
+	boards := make([]int, len(res))
+	for i := 0; i < len(res); i++ {
+		parsed, _ := strconv.Atoi(res[i])
+		boards[i] = parsed
+	}
+	return boards
 }
 
 func populateBoard(scanner *bufio.Scanner) []*[]*[5]square {

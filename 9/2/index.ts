@@ -66,7 +66,7 @@ function getLowpoints(grid: number[][]): coord[] {
 // script
 
 var numbers = fs
-  .readFileSync("testinput", "utf8")
+  .readFileSync("input", "utf8")
   .split("\n")
   .map((s) => s.split("").map((char) => +char));
 

@@ -1,6 +1,6 @@
 import * as fs from "fs";
 
-type fold = { axis: string; value: number };
+type fold = { axis: keyof point; value: number };
 type point = { x: number; y: number };
 const parts = fs.readFileSync("input", "utf8").split("\n\n");
 
@@ -11,14 +11,13 @@ function filterAlongFold(coords: point[], fold: fold) {
     .map((o, i) => {
       return { point: o, index: i };
     })
-    .filter((o) => o.point[fold.axis as keyof point] > fold.value);
+    .filter((o) => o.point[fold.axis] > fold.value);
 
   foldingCoords.forEach((o) => {
-    const newCoordinate =
-      fold.value - (o.point[fold.axis as keyof point] - fold.value);
-    o.point[fold.axis as keyof point] = newCoordinate;
+    const newCoordinate = fold.value - (o.point[fold.axis] - fold.value);
+    o.point[fold.axis] = newCoordinate;
     if (
-      coords.filter((coord) => coord.x == o.point.y && coord.y == o.point.y)
+      coords.filter((coord) => coord.x == o.point.x && coord.y == o.point.y)
         .length > 1
     ) {
       indicesToRemove.push(o.index);
@@ -54,7 +53,7 @@ const folds = parts[1].split("\n").map<fold>((desc) => {
   const bits = desc.split("=");
   const axis = bits[0][bits[0].length - 1];
   const value = +bits[1];
-  return { axis, value };
+  return { axis: axis as keyof point, value };
 });
 
 console.log(gamePoints.length);

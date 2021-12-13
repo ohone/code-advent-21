@@ -31,8 +31,6 @@ function generateCards(input: string[]): Card[] {
     const numbers = iterator.split(' ').filter(o => o !== '').flatMap(o => { return new Square(+o) });
     currentCard.push(numbers);
   }
-  console.log(currentCard);
-
   result.push(currentCard);
 
   return result;
@@ -86,7 +84,7 @@ function resultFromCard(card: Card, number: number) {
     .reduce((acc, item) => acc + item, 0) * number;
 }
 
-const gamedata = fs.readFileSync("input", "utf8").split("\n");
+const gamedata = fs.readFileSync("testinput", "utf8").split("\n");
 const game = gamedata[0].split(',').flatMap(o => +o);
 
 let cards = generateCards(gamedata.slice(1));
@@ -95,6 +93,7 @@ for (const number of game) {
   updateCards(cards, number);
   const winningCard = getWinningCardIndex(cards);
   if (winningCard) {
+    console.log("winner " + winningCard);
     cards.splice(winningCard, 1);
     if (cards.length == 1){
       console.log(resultFromCard(cards[0], number));

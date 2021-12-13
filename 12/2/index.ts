@@ -11,13 +11,12 @@ function generatePaths(start: node, end: node): node[][] {
 }
 
 function validNextNode(currentPath: node[], nextMove: node): boolean {
-  const isStart = nextMove.name === currentPath[0].name;
-  if (isStart) {
+  // is start
+  if (nextMove.name === currentPath[0].name) {
     return false;
   }
 
-  const isSmall = nextMove.small;
-  if (isSmall) {
+  if (nextMove.small) {
     const visitedBefore = currentPath.find((o) => o.name == nextMove.name);
     if (!visitedBefore) {
       return true;

@@ -1,5 +1,4 @@
 import * as fs from "fs";
-import { arrayBuffer } from "stream/consumers";
 
 type AcceptableChar = "a" | "b" | "c" | "d" | "e" | "f" | "g";
 type AcceptableNum = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
